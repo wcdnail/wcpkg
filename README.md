@@ -70,7 +70,8 @@ since otherwise you may run into path issues for some port build systems.
 
 ```cmd
 > git clone https://github.com/microsoft/vcpkg
-> .\vcpkg\bootstrap-vcpkg.bat
+> cd vcpkg
+> bootstrap-vcpkg.bat -disableMetrics
 ```
 
 To install the libraries for your project, run:
