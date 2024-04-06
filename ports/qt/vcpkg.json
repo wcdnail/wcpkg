@@ -1,8 +1,8 @@
 {
   "name": "qt",
-  "version": "6.4.2",
+  "version": "6.6.1",
   "port-version": 1,
-  "description": "Qt",
+  "description": "A cross-platform application and UI framework.",
   "homepage": "https://www.qt.io/",
   "license": null,
   "dependencies": [
@@ -53,6 +53,8 @@
       "platform": "linux"
     },
     "qtdoc",
+    "qtgraphs",
+    "qtgrpc",
     {
       "name": "qtimageformats",
       "default-features": false,
@@ -183,10 +185,7 @@
     },
     {
       "name": "qtwebview",
-      "default-features": false,
-      "features": [
-        "qml"
-      ]
+      "default-features": false
     },
     {
       "name": "qtwebview",

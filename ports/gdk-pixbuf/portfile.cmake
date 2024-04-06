@@ -1,21 +1,18 @@
-vcpkg_minimum_required(VERSION 2022-10-12) # for ${VERSION}
 vcpkg_from_gitlab(
     GITLAB_URL https://gitlab.gnome.org/
     OUT_SOURCE_PATH SOURCE_PATH
     REPO GNOME/gdk-pixbuf
     REF "${VERSION}"
-    SHA512 3406f47b413fe3860df410a0cc0076ce47d10605b39347105690c85616739e67e5dfd0804efcad758614b0c8d1369e410b9efaa704a234bfd19686b82595b9e1
+    SHA512 5b7ddb6e816a88ffd2b7f85583c841ea92719bef7da1acbd6f5714afebf8538660c5d391809f959eb1887613f9579cf51c85d6796c84335cedbf7af975d790c9
     HEAD_REF master
     PATCHES
         fix_build_error_windows.patch
         loaders-cache.patch
         use-libtiff-4-pkgconfig.patch
+        fix-static-deps.patch
 )
 
 if("introspection" IN_LIST FEATURES)
-    if(VCPKG_TARGET_IS_WINDOWS AND VCPKG_LIBRARY_LINKAGE STREQUAL "static")
-        message(FATAL_ERROR "Feature introspection currently only supports dynamic build.")
-    endif()
     list(APPEND OPTIONS_DEBUG -Dintrospection=disabled)
     list(APPEND OPTIONS_RELEASE -Dintrospection=enabled)
 else()
