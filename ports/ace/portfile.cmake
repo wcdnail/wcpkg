@@ -22,6 +22,8 @@ endif()
 vcpkg_extract_source_archive(
     SOURCE_PATH
     ARCHIVE "${ARCHIVE}"
+    PATCHES
+        Log_Record_tid.patch
 )
 
 set(ACE_ROOT "${SOURCE_PATH}")
@@ -92,6 +94,11 @@ endif()
 if("wchar" IN_LIST FEATURES)
   string(APPEND config_h_contents "#define ACE_USES_WCHAR 1\n")
 endif()
+
+if (VCPKG_BUILD_TYPE STREQUAL "debug")
+    string(APPEND config_h_contents "#define ACE_HAS_DUMP 1\n")
+endif()
+
 file(WRITE "${ACE_SOURCE_PATH}/config.h" "${config_h_contents}")
 
 if(VCPKG_TARGET_IS_UWP)
