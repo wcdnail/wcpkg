@@ -10,6 +10,7 @@ vcpkg_from_github(
         0008-sdl.patch
         0010-fix_build.patch
         0011-fix-include.patch
+        9000-cmake-config.patch
 )
 
 vcpkg_check_features(OUT_FEATURE_OPTIONS FEATURE_OPTIONS
