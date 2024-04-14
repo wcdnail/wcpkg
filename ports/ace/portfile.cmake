@@ -24,7 +24,6 @@ vcpkg_extract_source_archive(
     ARCHIVE "${ARCHIVE}"
     PATCHES
         Log_Record_tid.patch
-        Const_TChar.patch
 )
 
 set(ACE_ROOT "${SOURCE_PATH}")
