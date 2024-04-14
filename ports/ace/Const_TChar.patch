@@ -1,3 +1,176 @@
+diff --git a/ace/Argv_Type_Converter.cpp b/ace/Argv_Type_Converter.cpp
+index a3e1c26..38b1348 100644
+--- a/ace/Argv_Type_Converter.cpp
++++ b/ace/Argv_Type_Converter.cpp
+@@ -10,7 +10,7 @@
+ ACE_BEGIN_VERSIONED_NAMESPACE_DECL
+ 
+ #if defined (ACE_USES_WCHAR)
+-ACE_Argv_Type_Converter::ACE_Argv_Type_Converter (int &argc, wchar_t** argv)
++ACE_Argv_Type_Converter::ACE_Argv_Type_Converter (int &argc, const wchar_t** argv)
+   : saved_argc_ (argc),
+     char_argv_ (0),
+     wchar_argv_ (argv),
+@@ -27,7 +27,7 @@ ACE_Argv_Type_Converter::ACE_Argv_Type_Converter (int &argc, wchar_t** argv)
+ #endif  // ACE_USES_WCHAR
+ 
+ 
+-ACE_Argv_Type_Converter::ACE_Argv_Type_Converter (int &argc, char **argv)
++ACE_Argv_Type_Converter::ACE_Argv_Type_Converter (int &argc, const char **argv)
+   : saved_argc_(argc),
+     char_argv_(argv)
+ #if defined (ACE_USES_WCHAR)
+@@ -58,7 +58,7 @@ ACE_Argv_Type_Converter::~ACE_Argv_Type_Converter ()
+         this->align_wchar_with_char ();
+ 
+       for (int i = 0; i < this->before_pass_argc_; ++i)
+-        ACE_OS::free (this->char_argv_[i]);
++        ACE_OS::free ((void*)this->char_argv_[i]);
+ 
+       delete [] this->char_argv_;
+     }
+@@ -69,7 +69,7 @@ ACE_Argv_Type_Converter::~ACE_Argv_Type_Converter ()
+         this->align_char_with_wchar ();
+ 
+       for (int i = 0; i < this->before_pass_argc_; ++i)
+-        ACE_OS::free (this->wchar_argv_[i]);
++        ACE_OS::free ((void*)this->wchar_argv_[i]);
+ 
+       delete [] this->wchar_argv_;
+     }
+@@ -85,7 +85,7 @@ ACE_Argv_Type_Converter::initialize ()
+       // Make a copy of argv in 'char'. type Create one more argv entry
+       // than original argc for the NULL.
+       ACE_NEW (char_argv_,
+-               char *[this->saved_argc_ + 1]);
++               const char *[this->saved_argc_ + 1]);
+       this->char_argv_[saved_argc_] = 0;  // last entry of argv is
+                                           // always a NULL
+     }
+@@ -93,7 +93,7 @@ ACE_Argv_Type_Converter::initialize ()
+     {
+       // make a copy of argv in 'wchar_t' type
+       ACE_NEW (this->wchar_argv_,
+-               wchar_t*[this->saved_argc_ + 1]);
++               const wchar_t*[this->saved_argc_ + 1]);
+       this->wchar_argv_[saved_argc_] = 0;
+     }
+ }
+@@ -105,7 +105,7 @@ ACE_Argv_Type_Converter::align_char_with_wchar ()
+   for (int wchar_argv_index = 0; wchar_argv_index < this->saved_argc_;
+        ++wchar_argv_index)
+     {
+-      wchar_t *match_argv = this->wchar_argv_[wchar_argv_index];
++      const wchar_t *match_argv = this->wchar_argv_[wchar_argv_index];
+       // if n'th entries of both argv lists are different
+       if (ACE_OS::strcmp (this->char_argv_[wchar_argv_index],
+                           ACE_TEXT_ALWAYS_CHAR (match_argv)) != 0)
+@@ -118,7 +118,7 @@ ACE_Argv_Type_Converter::align_char_with_wchar ()
+                                   ACE_TEXT_ALWAYS_CHAR (match_argv)) == 0)
+                 {
+                   // swap the pointers in the char argv list
+-                  char *temp = this->char_argv_[wchar_argv_index];
++                  const char *temp = this->char_argv_[wchar_argv_index];
+                   this->char_argv_[wchar_argv_index] = this->char_argv_[i];
+                   this->char_argv_[i] = temp;
+                   break;
+@@ -136,7 +136,7 @@ ACE_Argv_Type_Converter::align_wchar_with_char ()
+   for (int char_argv_index = 0; char_argv_index < saved_argc_;
+        ++char_argv_index)
+     {
+-      char* match_argv = this->char_argv_[char_argv_index];
++      const char* match_argv = this->char_argv_[char_argv_index];
+       // if n'th entries of both argv lists are different
+       if (ACE_OS::strcmp (
+             ACE_TEXT_ALWAYS_CHAR (this->wchar_argv_[char_argv_index]),
+@@ -150,7 +150,7 @@ ACE_Argv_Type_Converter::align_wchar_with_char ()
+                     ACE_TEXT_ALWAYS_CHAR(this->wchar_argv_[i]),
+                     match_argv) == 0) {
+                 // swap the pointers in the char argv list
+-                wchar_t* temp = this->wchar_argv_[char_argv_index];
++                const wchar_t* temp = this->wchar_argv_[char_argv_index];
+                 this->wchar_argv_[char_argv_index] = this->wchar_argv_[i];
+                 this->wchar_argv_[i] = temp;
+                 break;
+@@ -170,12 +170,12 @@ ACE_Argv_Type_Converter::cleanup ()
+       //  Check whether it's ours to delete.
+       if (original_type_)
+         {
+-          ACE_OS::free (this->char_argv_[i]);
++          ACE_OS::free ((void*)this->char_argv_[i]);
+           this->char_argv_[i] = 0;
+         }
+       else
+         {
+-          ACE_OS::free (this->wchar_argv_[i]);
++          ACE_OS::free ((void*)this->wchar_argv_[i]);
+           this->wchar_argv_[i] = 0;
+         }
+     }
+diff --git a/ace/Argv_Type_Converter.h b/ace/Argv_Type_Converter.h
+index 5a7979d..41ff49d 100644
+--- a/ace/Argv_Type_Converter.h
++++ b/ace/Argv_Type_Converter.h
+@@ -37,19 +37,19 @@ ACE_BEGIN_VERSIONED_NAMESPACE_DECL
+ class ACE_Export ACE_Argv_Type_Converter
+ {
+ public:
+-  ACE_Argv_Type_Converter (int &argc, char** argv);
++  ACE_Argv_Type_Converter (int &argc, const char** argv);
+ 
+ #if defined (ACE_USES_WCHAR)
+-  ACE_Argv_Type_Converter (int &argc, wchar_t** argv);
++  ACE_Argv_Type_Converter (int &argc, const wchar_t** argv);
+ #endif  // ACE_USES_WCHAR
+ 
+   ~ACE_Argv_Type_Converter ();
+ 
+   /// Returns the pointer of converted command line.
+-  ACE_TCHAR** get_TCHAR_argv ();
++  const ACE_TCHAR** get_TCHAR_argv ();
+ 
+   /// Returns the pointer of ASCII (char) command line.
+-  char** get_ASCII_argv ();
++  const char** get_ASCII_argv ();
+ 
+   /// Returns the number of sub parameters (argc).
+   int& get_argc ();
+@@ -83,11 +83,11 @@ private:
+   int &saved_argc_;
+ 
+   /// Data member pointer that contains converted argv in ACE_ANTI_TCHAR.
+-  char** char_argv_;
++  const char** char_argv_;
+ 
+ #if defined (ACE_USES_WCHAR)
+   /// Data member pointer that contains converted argv in ACE_TCHAR.
+-  wchar_t** wchar_argv_;
++  const wchar_t** wchar_argv_;
+ 
+   /// argc value before any argv has been passed.
+   int before_pass_argc_;
+diff --git a/ace/Argv_Type_Converter.inl b/ace/Argv_Type_Converter.inl
+index c79688c..d76cb7f 100644
+--- a/ace/Argv_Type_Converter.inl
++++ b/ace/Argv_Type_Converter.inl
+@@ -1,7 +1,7 @@
+ // -*- C++ -*-
+ ACE_BEGIN_VERSIONED_NAMESPACE_DECL
+ 
+-ACE_INLINE ACE_TCHAR**
++ACE_INLINE const ACE_TCHAR**
+ ACE_Argv_Type_Converter::get_TCHAR_argv ()
+ {
+ #if defined (ACE_USES_WCHAR)
+@@ -17,7 +17,7 @@ ACE_Argv_Type_Converter::get_TCHAR_argv ()
+ #endif  // ACE_USES_WCHAR
+ }
+ 
+-ACE_INLINE char**
++ACE_INLINE const char**
+ ACE_Argv_Type_Converter::get_ASCII_argv ()
+ {
+ #if defined (ACE_USES_WCHAR)
 diff --git a/ace/Get_Opt.cpp b/ace/Get_Opt.cpp
 index 02cdbef..a6f7ee4 100644
 --- a/ace/Get_Opt.cpp
@@ -266,6 +439,19 @@ index e853dfd..984c0c9 100644
                     ACE_Log_Msg::MASK_TYPE mask);
  
    /// Current thread's priority mask set by @c priorities
+diff --git a/ace/Monitor_Control/Auto_Update_Starter.cpp b/ace/Monitor_Control/Auto_Update_Starter.cpp
+index ad603b3..1232c08 100644
+--- a/ace/Monitor_Control/Auto_Update_Starter.cpp
++++ b/ace/Monitor_Control/Auto_Update_Starter.cpp
+@@ -20,7 +20,7 @@ namespace ACE
+     Auto_Update_Starter::svc ()
+     {
+       MC_ADMINMANAGER* mgr =
+-        ACE_Dynamic_Service<MC_ADMINMANAGER>::instance ("MC_ADMINMANAGER");
++        ACE_Dynamic_Service<MC_ADMINMANAGER>::instance (ACE_TEXT("MC_ADMINMANAGER"));
+ 
+       /// We want the thread in which the event loop is started to
+       /// own the reactor, otherwise the handle_timeout() calls
 diff --git a/ace/Naming_Context.cpp b/ace/Naming_Context.cpp
 index d5acc96..402e928 100644
 --- a/ace/Naming_Context.cpp
