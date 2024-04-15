@@ -1,20 +1,50 @@
 diff --git a/src/build-data/botan-config.cmake.in b/src/build-data/botan-config.cmake.in
-index 46e2cbc..70a88ef 100644
+index 46e2cbc..bbb619a 100644
 --- a/src/build-data/botan-config.cmake.in
 +++ b/src/build-data/botan-config.cmake.in
-@@ -110,13 +110,13 @@ if(NOT TARGET Botan::Botan)
+@@ -91,35 +91,30 @@ if(NOT TARGET Botan::Botan-static)
+ endif()
+ %{endif}
+ 
+-%{if implib_name}
+-set(_Botan_implib     "${_Botan_PREFIX}/lib/%{implib_name}")
+-set(_Botan_shared_lib "${_Botan_PREFIX}/bin/%{shared_lib_name}")
+-%{endif}
+-%{unless implib_name}
+-set(_Botan_implib "")
+-%{endif}
++set(_Botan_implib_name botan-3)
+ 
+ %{if build_shared_lib}
+ if(NOT TARGET Botan::Botan)
+   if(NOT DEFINED _Botan_shared_lib)
+     set(_Botan_shared_lib "${_Botan_PREFIX}/lib/%{shared_lib_name}")
+   endif()
++  if(NOT DEFINED _Botan_implib)
++    set(_Botan_implib "${_Botan_PREFIX}/lib/${_Botan_implib_name}")
++  endif()
+ 
+   add_library(Botan::Botan SHARED IMPORTED)
+   set_target_properties(Botan::Botan
      PROPERTIES
        INTERFACE_INCLUDE_DIRECTORIES "${_Botan_PREFIX}/include"
        INTERFACE_LINK_OPTIONS        "SHELL:%{cxx_abi_flags}")
 -  if(EXISTS "${_Botan_PREFIX}/debug/lib/%{implib_name}")
-+%{if implib_name}
-     set_property(TARGET Botan::Botan APPEND PROPERTY IMPORTED_CONFIGURATIONS DEBUG)
-     set_target_properties(Botan::Botan PROPERTIES
-       IMPORTED_IMPLIB_DEBUG "${_Botan_PREFIX}/debug/lib/%{implib_name}"
-       IMPORTED_LOCATION_DEBUG "${_Botan_PREFIX}/debug/bin/%{shared_lib_name}"
-     )
+-    set_property(TARGET Botan::Botan APPEND PROPERTY IMPORTED_CONFIGURATIONS DEBUG)
+-    set_target_properties(Botan::Botan PROPERTIES
+-      IMPORTED_IMPLIB_DEBUG "${_Botan_PREFIX}/debug/lib/%{implib_name}"
+-      IMPORTED_LOCATION_DEBUG "${_Botan_PREFIX}/debug/bin/%{shared_lib_name}"
+-    )
 -  endif()
-+%{endif}
++  set_property(TARGET Botan::Botan APPEND PROPERTY IMPORTED_CONFIGURATIONS DEBUG)
++  set_target_properties(Botan::Botan PROPERTIES
++    IMPORTED_IMPLIB_DEBUG "${_Botan_PREFIX}/debug/lib/${_Botan_implib}"
++    IMPORTED_LOCATION_DEBUG "${_Botan_PREFIX}/debug/bin/%{shared_lib_name}"
++  )
    set_property(TARGET Botan::Botan APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
    set_target_properties(Botan::Botan PROPERTIES
-     IMPORTED_IMPLIB_RELEASE "${_Botan_PREFIX}/lib/%{implib_name}"
+-    IMPORTED_IMPLIB_RELEASE "${_Botan_PREFIX}/lib/%{implib_name}"
++    IMPORTED_IMPLIB_RELEASE "${_Botan_PREFIX}/lib/${_Botan_implib}"
+     IMPORTED_LOCATION_RELEASE "${_Botan_PREFIX}/bin/%{shared_lib_name}"
+     )
+   set_property(TARGET Botan::Botan APPEND PROPERTY IMPORTED_CONFIGURATIONS NOCONFIG)

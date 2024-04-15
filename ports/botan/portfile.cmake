@@ -1,7 +1,7 @@
-set(BTN_PATHCES )
-
+set(BOTAN_PATHCES
+)
 if(VCPKG_TARGET_IS_LINUX)
-    list(ADD BTN_PATHCES
+    set(BOTAN_PATHCES
         config.patch
     )
 endif()
@@ -20,7 +20,7 @@ vcpkg_from_github(
         fix_android.patch
         libcxx-winpthread-fixes.patch
         fix-cmake-usage.patch
-        ${BTN_PATHCES}
+        ${BOTAN_PATHCES}
 )
 file(COPY "${CMAKE_CURRENT_LIST_DIR}/configure" DESTINATION "${SOURCE_PATH}")
 
