@@ -1,3 +1,11 @@
+set(BTN_PATHCES )
+
+if(VCPKG_TARGET_IS_LINUX)
+    list(ADD BTN_PATHCES
+        config.patch
+    )
+endif()
+
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO randombit/botan
@@ -12,7 +20,7 @@ vcpkg_from_github(
         fix_android.patch
         libcxx-winpthread-fixes.patch
         fix-cmake-usage.patch
-        config.patch
+        ${BTN_PATHCES}
 )
 file(COPY "${CMAKE_CURRENT_LIST_DIR}/configure" DESTINATION "${SOURCE_PATH}")
 
