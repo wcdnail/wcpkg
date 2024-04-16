@@ -39,10 +39,10 @@ index 4488e9d..87ba70e 100644
  private:
    /// Internal pointer to the converted string.
 diff --git a/ace/ace_wchar.inl b/ace/ace_wchar.inl
-index b390b32..1b220bf 100644
+index b390b32..8caf592 100644
 --- a/ace/ace_wchar.inl
 +++ b/ace/ace_wchar.inl
-@@ -23,30 +23,39 @@ ACE_Wide_To_Ascii::char_rep ()
+@@ -23,30 +23,40 @@ ACE_Wide_To_Ascii::char_rep ()
  }
  
  inline char *
@@ -74,7 +74,8 @@ index b390b32..1b220bf 100644
 +      0,
 +      0,
 +      0,
-+      0);
++      0)
++      + (slen == -1 ? 0 : 1);
  # elif defined (ACE_LACKS_WCSLEN)
 -  const wchar_t * wtemp = wstr;
 -  while ((*wtemp) != 0) // Hopefully the string is null terminated!
@@ -94,12 +95,12 @@ index b390b32..1b220bf 100644
 +  ACE_UNUSED_ARG(cp);
  # else  /* ACE_WIN32 */
 -  size_t const len = ::wcslen (wstr) + 1;
-+  size_t const len = (slen == -1 ? ::wcslen (wstr) + 1 : slen + 1);
++  size_t const len = (slen == -1 ? ::wcslen (wstr) : slen) + 1;
 +  ACE_UNUSED_ARG(cp);
  # endif /* ACE_WIN32 */
  
  #if !defined (ACE_HAS_ICONV)
-@@ -54,7 +63,7 @@ ACE_Wide_To_Ascii::convert (const wchar_t *wstr)
+@@ -54,7 +64,7 @@ ACE_Wide_To_Ascii::convert (const wchar_t *wstr)
  #endif
  
  # if defined (ACE_WIN32)
@@ -108,7 +109,7 @@ index b390b32..1b220bf 100644
  # elif defined (ACE_VXWORKS)
    ::wcstombs (str, wstr, len);
  # elif defined (ACE_HAS_ICONV)
-@@ -89,7 +98,7 @@ ACE_Wide_To_Ascii::convert (const wchar_t *wstr)
+@@ -89,7 +99,7 @@ ACE_Wide_To_Ascii::convert (const wchar_t *wstr)
  }
  
  inline
@@ -117,7 +118,7 @@ index b390b32..1b220bf 100644
  {
  #if defined(ACE_HAS_ICONV)
    if (ACE_Wide_To_Ascii_iconv_env == 0)
-@@ -97,7 +106,7 @@ ACE_Wide_To_Ascii::ACE_Wide_To_Ascii (const wchar_t *s)
+@@ -97,7 +107,7 @@ ACE_Wide_To_Ascii::ACE_Wide_To_Ascii (const wchar_t *s)
        ACE_Wide_To_Ascii_iconv_env = iconv_open("", "WCHAR_T");
      }
  #endif
@@ -126,7 +127,7 @@ index b390b32..1b220bf 100644
  }
  
  inline
-@@ -113,17 +122,20 @@ ACE_Ascii_To_Wide::wchar_rep ()
+@@ -113,17 +123,20 @@ ACE_Ascii_To_Wide::wchar_rep ()
  }
  
  inline wchar_t *
@@ -143,15 +144,15 @@ index b390b32..1b220bf 100644
 +  if (0 == cp) {
 +      cp = GetACP();  // Codepage
 +  }
-+  int const len = ::MultiByteToWideChar (cp, 0, str, slen, 0, 0);
++  int const len = ::MultiByteToWideChar (cp, 0, str, slen, 0, 0) + (slen == -1 ? 0 : 1);
  # else /* ACE_WIN32 */
 -  size_t const len = strlen (str) + 1;
-+  size_t const len = (slen == -1 ? strlen (str) + 1 : slen + 1);
++  size_t const len = (slen == -1 ? strlen (str) : slen) + 1;
 +  ACE_UNUSED_ARG(cp);
  # endif /* ACE_WIN32 */
  
  #if !defined (ACE_HAS_ICONV)
-@@ -131,7 +143,7 @@ ACE_Ascii_To_Wide::convert (const char *str)
+@@ -131,7 +144,7 @@ ACE_Ascii_To_Wide::convert (const char *str)
  #endif
  
  # if defined (ACE_WIN32)
@@ -160,7 +161,7 @@ index b390b32..1b220bf 100644
  # elif defined (ACE_VXWORKS)
    ::mbstowcs (wstr, str, len);
  # elif defined (ACE_HAS_ICONV) /* ACE_VXWORKS */
-@@ -164,7 +176,7 @@ ACE_Ascii_To_Wide::convert (const char *str)
+@@ -164,7 +177,7 @@ ACE_Ascii_To_Wide::convert (const char *str)
  }
  
  inline
@@ -169,7 +170,7 @@ index b390b32..1b220bf 100644
  {
  #if defined(ACE_HAS_ICONV)
    if (ACE_Ascii_To_Wide_iconv_env == 0)
-@@ -172,7 +184,7 @@ ACE_Ascii_To_Wide::ACE_Ascii_To_Wide (const char *s)
+@@ -172,7 +185,7 @@ ACE_Ascii_To_Wide::ACE_Ascii_To_Wide (const char *s)
        ACE_Ascii_To_Wide_iconv_env = iconv_open("WCHAR_T", "");
      }
  #endif
