@@ -24,7 +24,7 @@ vcpkg_extract_source_archive(
     ARCHIVE "${ARCHIVE}"
     PATCHES
         Log_Record_tid.patch
-        ACE_WCharToANSI_CodePage.patch
+        ACE_WidenChars_Win32.patch
 )
 
 set(ACE_ROOT "${SOURCE_PATH}")
