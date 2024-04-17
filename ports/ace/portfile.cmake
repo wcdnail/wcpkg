@@ -22,9 +22,6 @@ endif()
 vcpkg_extract_source_archive(
     SOURCE_PATH
     ARCHIVE "${ARCHIVE}"
-    PATCHES
-        Log_Record_tid.patch
-        ACE_WidenChars_Win32.patch
 )
 
 set(ACE_ROOT "${SOURCE_PATH}")
