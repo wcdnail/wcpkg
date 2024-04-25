@@ -1,17 +1,18 @@
 {
   "name": "ace",
-  "version": "7.1.2",
-  "port-version": 1,
+  "version": "7.1.4",
   "maintainers": "Johnny Willemsen <jwillemsen@remedy.nl>",
   "description": "The ADAPTIVE Communication Environment",
   "homepage": "https://github.com/DOCGroup/ACE_TAO",
   "license": "DOC",
-  "supports": "!uwp",
   "dependencies": [
     {
-      "name": "vcpkg-msbuild",
-      "host": true,
-      "platform": "windows"
+      "name": "vcpkg-cmake",
+      "host": true
+    },
+    {
+      "name": "vcpkg-cmake-config",
+      "host": true
     }
   ],
   "features": {
@@ -21,27 +22,8 @@
         "openssl"
       ]
     },
-    "tao": {
-      "description": "The ACE ORB",
-      "supports": "native | !(windows & arm)"
-    },
-    "wchar": {
-      "description": "Enable extra wide char functions in ACE",
-      "supports": "!osx"
-    },
-    "xml": {
-      "description": "Enable XML features in ACE"
-    },
-    "xml-utils": {
-      "description": "Include the ACE_XML_Utils library",
-      "dependencies": [
-        {
-          "name": "xerces-c",
-          "features": [
-            "xmlch-wchar"
-          ]
-        }
-      ]
+    "asnmp": {
+      "description": "Enable ASNMP build"
     },
     "zlib": {
       "description": "Enable zlib support",
