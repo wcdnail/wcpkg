@@ -1,6 +1,6 @@
 set(BOTAN_PATHCES
 )
-if(VCPKG_TARGET_IS_LINUX)
+if(VCPKG_TARGET_IS_LINUX OR VCPKG_TARGET_IS_MINGW)
     set(BOTAN_PATHCES
         config.patch
     )
@@ -25,7 +25,7 @@ vcpkg_from_github(
 file(COPY "${CMAKE_CURRENT_LIST_DIR}/configure" DESTINATION "${SOURCE_PATH}")
 
 if(VCPKG_TARGET_IS_MINGW)
-    vcpkg_check_linkage(ONLY_STATIC_LIBRARY)
+    #vcpkg_check_linkage(ONLY_STATIC_LIBRARY)
 endif()
 
 vcpkg_find_acquire_program(PYTHON3)
