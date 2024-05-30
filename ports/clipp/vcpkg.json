@@ -1,7 +1,7 @@
 {
   "name": "clipp",
-  "version-date": "2024-05-27",
-  "port-version": 2,
+  "version-string": "1.2.4",
+  "port-version": 3,
   "description": "command line interfaces for modern C++",
   "license": "MIT",
   "dependencies": [
